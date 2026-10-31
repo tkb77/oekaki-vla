@@ -1,0 +1,43 @@
+# Data generation (expert + dataset) configuration
+seed: 0
+episodes_per_shape: 100
+shapes_to_use: [circle, square, triangle, star, line]
+max_episode_s: 24.0
+
+shapes:
+  center_jitter: 0.010
+  rot_jitter_deg: 15.0
+  margin: 0.012
+  circle_radius: [0.030, 0.042]
+  square_half: [0.027, 0.038]
+  triangle_radius: [0.036, 0.048]
+  star_radius: [0.038, 0.050]
+  star_inner_ratio: 0.42
+  line_length: [0.060, 0.100]
+
+expert:
+  start_hold_s: 0.3
+  home_hold_s: 0.6
+  travel_speed: 0.09        # m/s in the air
+  hover: 0.010              # hover height above the (estimated / upper-bound) paper
+  descend_speed: 0.025      # m/s probing descent until the contact switch fires
+  preload_speed: 0.012
+  target_compression: 0.003
+  draw_speed: 0.040         # m/s along the stroke
+  est_gain: 0.5             # low-pass gain of the paper-height estimate
+  search_speed: 0.025       # m/s downward search when contact is lost while drawing
+  max_compression: 0.007    # back off above this
+  lift_height: 0.020
+  lift_speed: 0.05
+
+noise:                      # DART-style execution noise (recorded action stays clean)
+  prob: 0.35                # fraction of episodes with noise
+  z_sigma: 0.0025           # stationary std of the height perturbation (m)
+  z_rho: 0.95               # AR(1) correlation per control step
+  disturbance_window: [0.25, 0.65]   # fraction of the expected draw time at which the paper moves
+
+dataset:
+  root: data
+  repo_prefix: oekaki
+  image_size: 256
+  workers: 12

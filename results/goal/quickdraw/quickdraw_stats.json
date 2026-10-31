@@ -1,0 +1,42 @@
+[
+ {
+  "word": "circle",
+  "read": 122876,
+  "train_kept": 95289,
+  "train": 60000,
+  "test_kept": 23498,
+  "test": 5000
+ },
+ {
+  "word": "square",
+  "read": 125145,
+  "train_kept": 96230,
+  "train": 60000,
+  "test_kept": 24217,
+  "test": 5000
+ },
+ {
+  "word": "triangle",
+  "read": 123170,
+  "train_kept": 96376,
+  "train": 60000,
+  "test_kept": 24054,
+  "test": 5000
+ },
+ {
+  "word": "star",
+  "read": 137619,
+  "train_kept": 105580,
+  "train": 60000,
+  "test_kept": 26625,
+  "test": 5000
+ },
+ {
+  "word": "smiley face",
+  "read": 124386,
+  "train_kept": 93118,
+  "train": 60000,
+  "test_kept": 23323,
+  "test": 5000
+ }
+]

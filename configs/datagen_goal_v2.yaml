@@ -1,0 +1,21 @@
+# Dataset goal_v2 (follow-up): twice as many single-drawing episodes as goal_v1, plus episodes with two drawings
+# side by side (for E5). Everything else is inherited from datagen_goal_v1.yaml. Generated on a rented GPU node
+# (scripts/goal_pipeline.sh datagen_goal_v2); training subsets are picked with `episode_select` in the training configs.
+base: configs/datagen_goal_v1.yaml
+seed: 4
+episodes_per_category: 400
+pairs:
+  n: 500
+  size_range: [0.30, 0.44]   # each drawing, fraction of the drawable area (E5 uses 0.42)
+  jitter: 0.03               # centre along the split axis: 0.27 / 0.73 +/- this
+  cross_jitter: 0.10         # centre across the split axis: 0.5 +/- this
+  max_path_m: 0.55
+  named_prob: 0.5
+  named_templates:
+    - draw a {a} and a {b}
+    - please draw a {a} next to a {b}
+    - sketch a {a} and a {b}
+dataset:
+  name: goal_v2
+  repo_id: local/oekaki_goal_v2
+  workers: 40

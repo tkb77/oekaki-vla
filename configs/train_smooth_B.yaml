@@ -1,0 +1,27 @@
+# Smooth drawing, condition B (joints only) on the fixed-floor dataset, plain SmolVLA flow matching
+condition: B
+dataset_root: data/fixed_floor/B
+repo_id: local/oekaki_fixed_floor_B
+base_model: lerobot/smolvla_base
+output_dir: outputs/train/smooth_B
+seed: 1000
+steps: 10000
+effective_batch_size: 64
+max_micro_batch: 32        # fixed for both conditions (identical data order); grad accumulation x2 -> effective 64
+shared_gpu_micro_batch: 16 # micro-batch on the shared GPU (accumulation keeps the effective batch 64)
+gpu_margin_mib: 8000       # keep this much free for other users' processes (memory cap + OOM back-off)
+lr: 1.0e-4
+warmup_steps: 1000
+decay_steps: 10000
+decay_lr: 2.5e-6
+grad_clip: 10.0
+amp_dtype: bf16
+num_workers: 4
+prefetch_factor: 2
+val_every_n_episode: 20    # every 20th episode is held out for validation loss
+val_interval: 1000
+val_batches: 8
+log_interval: 50
+save_interval: 2500
+chunk_size: 50
+n_action_steps: 5          # inference-time replanning period (closed loop for contact feedback)

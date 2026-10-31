@@ -1,0 +1,33 @@
+# Pre-check: overfit model G on a few episodes and check that it draws the goal at the
+# goal's position and size.
+condition: G
+dataset_root: data/goal_v1/G
+repo_id: local/oekaki_goal_v1
+base_model: lerobot/smolvla_base
+output_dir: outputs/train/goal_overfit_G
+exclude_features: []
+seed: 1000
+steps: 4000
+effective_batch_size: 32
+max_micro_batch: 32
+shared_gpu_micro_batch: 8
+gpu_margin_mib: 0
+lr: 1.0e-4
+warmup_steps: 300
+decay_steps: 4000
+decay_lr: 1.0e-5
+grad_clip: 10.0
+amp_dtype: bf16
+num_workers: 8
+prefetch_factor: 2
+val_every_n_episode: 20
+val_interval: 500
+val_batches: 4
+log_interval: 50
+save_interval: 2000
+chunk_size: 50
+n_action_steps: 5
+extras:
+  progress: {fps: 30, scale: 10.0, max_s: 40.0}
+  tt_rtc: {decay: 0.75, max_delay: 6}
+train_episodes_per_category: 6   # the first 6 episodes of each category (train = val)

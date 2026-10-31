@@ -1,0 +1,24 @@
+# Goal-image evaluation. Every agent sees the same episodes (paper height, layout, drawing, seeds).
+seed: 2026
+sketch_split: test          # held-out Quick, Draw! drawings (never in the generator / VLA training data)
+episodes_per_category: 50   # per setting x category x model; lower for quick checks
+max_episode_s: 40.0
+disturbance: false          # paper height is randomised in every setting; no mid-drawing motion
+inference: {mode: ttrtc, replan: 30, delay: 3, noise_scale: 0.0}   # best smooth-drawing scheme
+metrics: {size: 128, dilate_px: 3, cover_tol_px: 2}
+settings:
+  E1: {goal: true_goal, named: true, models: [N, G]}
+  E2: {goal: generated, named: true, models: [G]}
+  E3: {goal: true_goal, named: true, layout: fixed, models: [N, G]}
+  E4: {goal: true_goal, named: false, models: [N, G]}
+  E5: {goal: pair, named: false, models: [G]}
+# E3: the goal is placed at one of these layouts (size = fraction of the drawable area, centre in normalised
+# drawable-area coordinates 0..1), cycling over the episodes
+fixed_layouts:
+  - {size: 0.45, center: [0.27, 0.27]}
+  - {size: 0.45, center: [0.73, 0.73]}
+  - {size: 0.45, center: [0.27, 0.73]}
+  - {size: 0.45, center: [0.73, 0.27]}
+  - {size: 0.85, center: [0.50, 0.50]}
+# E5: two drawings side by side (left / right halves), each this size
+pair_size: 0.42

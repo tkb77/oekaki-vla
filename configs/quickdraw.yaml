@@ -1,0 +1,13 @@
+# Quick, Draw! (CC BY 4.0, https://github.com/googlecreativelab/quickdraw-dataset): download, filter, split
+seed: 0
+categories: [circle, square, triangle, star, smiley face]
+url: https://storage.googleapis.com/quickdraw_dataset/full/simplified/{word}.ndjson
+raw_dir: data/quickdraw/raw
+out_dir: data/quickdraw/processed
+recognized_only: true
+max_strokes: 8          # keeps drawings the robot can draw in one episode
+max_points: 160         # total points of the (already RDP-simplified) drawing
+min_extent: 40          # bounding-box max side in the 0..255 source frame (drops tiny scribbles)
+test_mod: 10            # key_id % test_mod == 0 -> held-out "test" split (generator/classifier eval, E1 goals)
+max_train_per_class: 60000
+max_test_per_class: 5000

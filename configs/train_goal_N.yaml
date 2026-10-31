@@ -1,0 +1,33 @@
+# Model N (no goal image, baseline): dataset goal_v1 without the goal camera, top + wrist + state (joints, contact,
+# compression) + instruction. Same recipe as the best smooth-drawing model (training-time RTC + elapsed time).
+# Meant for a dedicated GPU: python scripts/train_smolvla.py --config configs/train_goal_N.yaml --dedicated
+condition: N
+dataset_root: data/goal_v1/G
+repo_id: local/oekaki_goal_v1
+base_model: lerobot/smolvla_base
+output_dir: outputs/train/goal_N
+exclude_features: [observation.images.goal]   # the goal stream is in the data but not an input
+seed: 1000
+steps: 15000
+effective_batch_size: 64
+max_micro_batch: 32        # micro-batch x gradient accumulation = 64 on any GPU with >= ~12 GB free
+shared_gpu_micro_batch: 8
+gpu_margin_mib: 0
+lr: 1.0e-4
+warmup_steps: 1000
+decay_steps: 15000
+decay_lr: 2.5e-6
+grad_clip: 10.0
+amp_dtype: bf16
+num_workers: 8
+prefetch_factor: 2
+val_every_n_episode: 20    # every 20th episode is held out for validation loss
+val_interval: 1000
+val_batches: 8
+log_interval: 50
+save_interval: 5000
+chunk_size: 50
+n_action_steps: 5
+extras:
+  progress: {fps: 30, scale: 10.0, max_s: 40.0}
+  tt_rtc: {decay: 0.75, max_delay: 6}

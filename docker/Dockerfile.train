@@ -1,0 +1,45 @@
+# Training environment for rented cloud GPU nodes (tested on AWS g6e, NVIDIA L40S). Environment only: the code comes from the
+# git-archive tar at run time (scripts/cloud_task.sh), data and weights from S3.
+#   /opt/dvla/.venv   Python 3.12 + the locked dependencies (uv.lock), but torch/torchvision as the CUDA 12.8
+#                     wheels of the same version (runs on drivers >= 570; the default CUDA 13 wheels need >= 580)
+#                     (all other packages exactly as locked). libpython3.12 is needed by torchcodec's FFmpeg 6 core
+#   /opt/hf           Hugging Face cache with lerobot/smolvla_base and its VLM backbone
+#   aws (CLI v2), ffmpeg (torchcodec), python3 + wandb (optional run logging), git
+#   EGL / GL libraries and the NVIDIA EGL vendor file for MuJoCo rendering (closed-loop evaluation, MUJOCO_GL=egl)
+# Build and push: bash docker/build_train.sh <tag>
+FROM ubuntu:24.04
+ENV DEBIAN_FRONTEND=noninteractive \
+    NVIDIA_VISIBLE_DEVICES=all \
+    NVIDIA_DRIVER_CAPABILITIES=all \
+    MUJOCO_GL=egl \
+    UV_PYTHON_INSTALL_DIR=/opt/uv-python \
+    UV_LINK_MODE=copy \
+    HF_HOME=/opt/hf \
+    DV_VENV=/opt/dvla/.venv
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates curl unzip git ffmpeg libgomp1 procps python3 python3-pip libpython3.12t64 less \
+        libegl1 libgl1 libgles2 libglvnd0 libglx0 \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /usr/share/glvnd/egl_vendor.d \
+    && printf '{"file_format_version":"1.0.0","ICD":{"library_path":"libEGL_nvidia.so.0"}}\n' > /usr/share/glvnd/egl_vendor.d/10_nvidia.json \
+    && pip3 install -q --no-cache-dir --break-system-packages wandb \
+    && curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o /tmp/awscli.zip \
+    && unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install && rm -rf /tmp/aws /tmp/awscli.zip \
+    && curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin INSTALLER_NO_MODIFY_PATH=1 sh
+WORKDIR /opt/dvla
+COPY pyproject.toml uv.lock ./
+RUN uv export --frozen --no-hashes --no-emit-project --no-header -o /tmp/req_all.txt \
+    && grep -vE '^(torch|torchvision|triton|nvidia-[a-z0-9-]+|cuda-bindings|cuda-toolkit)==' /tmp/req_all.txt > /tmp/req.txt \
+    && tv=$(grep -E '^(torch|torchvision)==' /tmp/req_all.txt | cut -d';' -f1 | tr -d ' ' | tr '\n' ' ') \
+    && uv venv --python /usr/bin/python3.12 .venv \
+    && uv pip install --python .venv/bin/python --no-cache --no-deps -r /tmp/req.txt \
+    && uv pip install --python .venv/bin/python --no-cache --index-url https://download.pytorch.org/whl/cu128 $tv \
+    && .venv/bin/python -c "import torch, torchvision; assert '+cu128' in torch.__version__, torch.__version__; print(torch.__version__, torchvision.__version__)" \
+    && rm /tmp/req_all.txt /tmp/req.txt && chmod -R a+rwX /opt/dvla
+RUN .venv/bin/python -c "from huggingface_hub import snapshot_download as d; f = ['*.json', '*.safetensors', '*.txt']; \
+        d('lerobot/smolvla_base', allow_patterns=f); d('HuggingFaceTB/SmolVLM2-500M-Video-Instruct', allow_patterns=f)" \
+    && chmod -R a+rwX /opt/hf
+ARG IMAGE_TAG=unknown
+ARG BUILD_DATE=unknown
+ARG REPO_HEAD=unknown
+LABEL org.opencontainers.image.title="${IMAGE_TAG}" org.opencontainers.image.created="${BUILD_DATE}" org.opencontainers.image.revision="${REPO_HEAD}"

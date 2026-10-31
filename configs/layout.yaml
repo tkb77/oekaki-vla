@@ -1,0 +1,6 @@
+# Layout randomisation: where a drawing is placed on the paper in each episode.
+# The same affine transform is applied to the expert's strokes and to the goal image.
+paper_margin: 0.012      # m; drawable area = paper minus this margin on every side (reachable, see the IK check)
+size_frac: [0.40, 0.90]  # bounding-box longer side / drawable-area side
+rot_deg: 15.0            # uniform +/-
+flip_prob: 0.5           # left-right mirror

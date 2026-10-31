@@ -1,0 +1,18 @@
+Oekaki VLA
+Copyright 2026 The Oekaki VLA authors
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This repository includes or adapts third-party material:
+
+- assets/so101/: SO-101 robot model from MuJoCo Menagerie (robotstudio_so101), Apache License 2.0
+  (assets/so101/LICENSE). The pen holder, pen and paper were added in oekaki/env/.
+- third_party/sketch-model/ and oekaki/generator/model.py: adapted from lcccluck/sketch-model
+  (https://huggingface.co/lcccluck/sketch-model), Apache License 2.0 (see third_party/sketch-model/NOTICE.md).
+
+Used at run time but not redistributed here:
+
+- Quick, Draw! dataset, Google Creative Lab, CC BY 4.0 (https://github.com/googlecreativelab/quickdraw-dataset);
+  downloaded by scripts/download_quickdraw.py.
+- SmolVLA (lerobot/smolvla_base) and LeRobot, Hugging Face, Apache License 2.0.
+- MuJoCo, Google DeepMind, Apache License 2.0.

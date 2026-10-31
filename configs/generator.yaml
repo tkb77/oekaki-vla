@@ -1,0 +1,30 @@
+# Image generator: class-conditional DDPM, 64 x 64 line drawings
+seed: 0
+quickdraw_config: configs/quickdraw.yaml   # categories and the processed Quick, Draw! splits
+image_size: 64
+fill: 0.8                 # drawing's longer side / image side (centred); layout is applied after generation
+cache_dir: data/quickdraw/render64
+output_dir: outputs/generator
+model:
+  base_channels: 64
+  timesteps: 200          # training noise levels (cosine schedule)
+train:
+  steps: 100000
+  batch_size: 256
+  lr: 2.0e-4
+  warmup_steps: 1000
+  cfg_drop_prob: 0.1      # class label dropped -> unconditional branch for classifier-free guidance
+  ema_decay: 0.9995
+  grad_clip: 1.0
+  num_workers: 4
+  log_every: 100
+  sample_every: 5000
+  save_every: 10000
+  amp: bf16               # bf16 autocast on GPUs that support it, else fp32
+sample:
+  ddim_steps: 50
+  guidance: 3.0
+  eta: 0.0
+postprocess:
+  thresh: 128
+  min_area: 4             # px at 64 x 64; compact blobs of >= 2 px (smiley eyes) are kept

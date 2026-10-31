@@ -1,0 +1,33 @@
+# Follow-up: model G on twice as many single-drawing episodes (dataset goal_v2 singles, 2000), same
+# steps and recipe as goal_G -- does more data improve the shape detail?
+episode_select: {singles_per_category: null, pairs: false}
+condition: G
+dataset_root: data/goal_v2/G
+repo_id: local/oekaki_goal_v2
+base_model: lerobot/smolvla_base
+output_dir: outputs/train/goal_G_2x
+exclude_features: []
+seed: 1000
+steps: 15000
+effective_batch_size: 64
+max_micro_batch: 32        # micro-batch x gradient accumulation = 64 on any GPU with >= ~12 GB free
+shared_gpu_micro_batch: 8
+gpu_margin_mib: 0
+lr: 1.0e-4
+warmup_steps: 1000
+decay_steps: 15000
+decay_lr: 2.5e-6
+grad_clip: 10.0
+amp_dtype: bf16
+num_workers: 8
+prefetch_factor: 2
+val_every_n_episode: 20    # every 20th episode is held out for validation loss
+val_interval: 1000
+val_batches: 8
+log_interval: 50
+save_interval: 5000
+chunk_size: 50
+n_action_steps: 5
+extras:
+  progress: {fps: 30, scale: 10.0, max_s: 40.0}
+  tt_rtc: {decay: 0.75, max_delay: 6}

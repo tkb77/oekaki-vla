@@ -1,0 +1,31 @@
+# environments / caches
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+# large or private material (datasets, checkpoints, weights, logs, course documents)
+/data/
+/outputs/
+/logs/
+/artifacts/
+/from_user/
+third_party/mujoco_menagerie/
+*.pt
+*.pth
+*.safetensors
+*.ckpt
+*.onnx
+*.ndjson
+*.npz
+# goal-image results: keep small images/tables only
+results/**/*.mp4
+*.tar
+/docs/*
+!/docs/cloud_training.md
+!/docs/img/
+!/docs/hub/
+# local development log (not published)
+/PROGRESS_SUMMARY.md
+
+# course report (HTML/PDF): kept locally, not published
+/report/

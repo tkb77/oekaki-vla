@@ -1,0 +1,25 @@
+# SmolVLA fine-tuning, condition A (state = joints + contact + compression)
+condition: A
+dataset_root: data/touch/A
+repo_id: local/oekaki_touch_A
+base_model: lerobot/smolvla_base
+output_dir: outputs/train/A
+seed: 1000
+steps: 20000
+effective_batch_size: 64
+max_micro_batch: 32        # fixed for both conditions (identical data order); grad accumulation x2 -> effective 64
+shared_gpu_micro_batch: 32 # cap used when another project's process is loading the GPU
+lr: 1.0e-4
+warmup_steps: 1000
+decay_steps: 20000
+decay_lr: 2.5e-6
+grad_clip: 10.0
+amp_dtype: bf16
+num_workers: 8
+val_every_n_episode: 20    # every 20th episode is held out for validation loss
+val_interval: 1000
+val_batches: 8
+log_interval: 50
+save_interval: 5000
+chunk_size: 50
+n_action_steps: 10         # inference-time replanning period (closed loop for contact feedback)

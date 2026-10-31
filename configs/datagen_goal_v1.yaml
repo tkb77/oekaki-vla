@@ -1,0 +1,27 @@
+# Dataset goal_v1: Quick, Draw! drawings with randomised layout, goal image as a third camera.
+# Expert, noise and disturbance settings are inherited from `base` and overridden below.
+base: configs/datagen.yaml
+seed: 3
+categories: [circle, square, triangle, star, smiley face]
+episodes_per_category: 200
+sketch_split: train        # Quick, Draw! split the episodes draw from (test split is kept for evaluation)
+max_episode_s: 40.0
+max_path_m: 0.55           # skip drawings whose laid-out path is longer (episode would not fit the time limit)
+named_prob: 0.7            # instruction names the category; otherwise a category-free instruction
+unnamed_templates:
+  - draw the picture shown
+  - copy the reference drawing
+  - draw what the example shows
+  - reproduce the reference picture
+heldout_unnamed_templates:  # evaluation only
+  - please copy this drawing
+goal:
+  size: 256                # stored at the camera resolution; line width = size / 32 (common renderer)
+expert:
+  tap_hold_s: 0.2          # dots (e.g. smiley eyes): press for this long, then lift
+dataset:
+  root: data
+  name: goal_v1
+  repo_id: local/oekaki_goal_v1
+  image_size: 256
+  workers: 6

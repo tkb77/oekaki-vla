@@ -1,0 +1,17 @@
+# Judge CNN: 5-way classifier on 64 x 64 standard-style drawings, used to score generated
+# images and the robot's canvas. Random scale / shift / rotation / mirror so that it works anywhere on the paper.
+seed: 0
+generator_config: configs/generator.yaml   # rendered training images (same cache as the generator)
+output_dir: outputs/classifier
+image_size: 64
+augment:
+  scale: [0.35, 1.0]      # x the centred drawing (fill 0.8) -> 0.28..0.8 of the image (paper layout: 0.34..0.76)
+  rot_deg: 20.0
+  flip_prob: 0.5
+  max_shift: 1.0          # fraction of the free margin
+train:
+  epochs: 6
+  batch_size: 256
+  lr: 2.0e-3
+  weight_decay: 1.0e-4
+  num_workers: 4
